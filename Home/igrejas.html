@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Igrejas</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-image: url("../Imagens/banner1.webp");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        color: white;
+        padding-top: 60px;
+      }
+
+      .navbar {
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: clamp(14px, 2vw, 16px);
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover {
+        background-color: #4caf50;
+      }
+
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        position: absolute;
+        right: 20px;
+      }
+
+      .menu-toggle span {
+        height: 3px;
+        width: 25px;
+        background-color: white;
+        margin: 4px 0;
+        transition: 0.4s;
+      }
+
+      #map {
+        width: 80%;
+        height: 500px;
+        margin: 100px auto;
+        border: 2px solid #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      }
+
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: flex;
+        }
+
+        .nav-links {
+          position: absolute;
+          top: 60px;
+          left: 0;
+          width: 100%;
+          background-color: rgba(0, 0, 0, 0.95);
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          padding: 30px 0;
+          min-height: 300px;
+          display: none;
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        .navbar {
+          justify-content: space-between;
+        }
+      }
+    </style>
+
+    <!-- HERE Maps CSS -->
+    <link
+      rel="stylesheet"
+      href="https://js.api.here.com/v3/3.1/mapsjs-ui.css"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://js.api.here.com/v3/3.1/mapsjs-mapevents.css"
+      type="text/css"
+    />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="nav-links" id="navLinks">
+        <a href="Home.html">Home</a>
+        <a href="igrejas.html">Igrejas</a>
+        <a href="arrecadacao.html">Arrecadação</a>
+        <a href="Educa.html">EducaFlix</a>
+        <a href="palavra.html">Palavra</a>
+        <a href="Bíblia.html">Bíblia</a>
+      </div>
+      <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Mapa -->
+    <div id="map"></div>
+
+    <!-- HERE Maps -->
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+
+    <script>
+      function toggleMenu() {
+        const nav = document.getElementById("navLinks");
+        nav.classList.toggle("active");
+      }
+
+      // Plataforma do HERE Maps
+      var platform = new H.service.Platform({
+        apikey: "S1gOzwm2iZJC0TSIxMx5a5-PHYQld9FKywx8oegymGI",
+      });
+
+      var defaultLayers = platform.createDefaultLayers();
+      var map = new H.Map(
+        document.getElementById("map"),
+        defaultLayers.vector.normal.map,
+        {
+          zoom: 13,
+          center: { lat: -23.43886, lng: -46.56228 },
+        }
+      );
+
+      var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+      var ui = H.ui.UI.createDefault(map, defaultLayers);
+
+      // Marcadores para as Igrejas
+      var marker = new H.map.Marker({ lat: -23.4383, lng: -46.56074 });
+      map.addObject(marker);
+      marker.setData("Igreja Semeando");
+
+      marker.addEventListener("tap", function () {
+        const infoWindow = new H.ui.InfoBubble(marker.getGeometry(), {
+          content: `
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-direction: row; width: 300px; padding: 10px; background-color: white; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); font-family: Arial, sans-serif;">
+            <div>
+                <h3 style="margin: 0; font-size: 16px; color: #333;">Igreja Semeando</h3>
+                <p style="margin: 5px 0; font-size: 14px; color: #555;">
+                    Localização:<br>
+                    Rua Isaura Speca Pinto<br>Parque Continental - 291.
+                </p>
+            </div>
+            <button
+                onclick="window.location.href='../PIgreja/IgrejaSemeando/IgrejaSemeando.html'"
+                style="padding: 8px 12px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                Clique Aqui
+            </button>
+        </div>`,
+        });
+        ui.addBubble(infoWindow);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bíblia</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #111827;
+        color: white;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #1f2937;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      header .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .profile-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      .profile-button img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        right: 1rem;
+        margin-top: 0.5rem;
+        width: 12rem;
+        background-color: #1f2937;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: none;
+      }
+
+      .dropdown-menu.hidden {
+        display: none;
+      }
+
+      .dropdown-menu .drop-zone {
+        padding: 1rem;
+      }
+
+      .draggable {
+        background-color: #374151;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+        cursor: move;
+      }
+
+      .navbar {
+        background-color: #1f2937;
+        padding: 1rem;
+        margin-top: 4rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        margin: 0 1rem;
+        transition: color 0.3s;
+      }
+
+      .navbar a:hover {
+        color: #9ca3af;
+      }
+
+      main {
+        padding: 2rem;
+        margin-top: 4rem;
+      }
+
+      section {
+        margin-bottom: 2rem;
+      }
+
+      h2 {
+        font-size: 1.875rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: #1f2937;
+        color: white;
+        border: none;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      .item {
+        background-color: #1f2937;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        transition: transform 0.3s;
+      }
+
+      .item:hover {
+        transform: scale(1.05);
+      }
+
+      .item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .item h3 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .item p {
+        color: #9ca3af;
+      }
+
+      footer {
+        background-color: #1f2937;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        header,
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .navbar a {
+          margin: 0.5rem 0;
+        }
+
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .item img {
+          height: 150px;
+        }
+
+        input[type="text"] {
+          font-size: 1rem;
+        }
+        .menu-toggle {
+          display: none;
+          flex-direction: column;
+          cursor: pointer;
+          position: absolute;
+          right: 50px;
+        }
+
+        .menu-toggle span {
+          height: 3px;
+          width: 25px;
+          background-color: white;
+          margin: 4px 0;
+          transition: 0.4s;
+        }
+
+        @media (max-width: 768px) {
+          .menu-toggle {
+            display: flex;
+          }
+
+          .navbar {
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .navbar.active {
+            display: flex;
+          }
+        }
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.querySelector(".menu-toggle");
+        const navbar = document.querySelector(".navbar");
+
+        menuToggle.addEventListener("click", function () {
+          navbar.classList.toggle("active");
+        });
+
+        const profileButton = document.getElementById("profile-button");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        const draggableItems = document.querySelectorAll(".draggable");
+        const searchInput = document.getElementById("search-input");
+        const searchResults = document.getElementById("search-results");
+        const allItems = document.querySelectorAll(".item");
+        const allSections = document.querySelectorAll("section");
+
+        if (profileButton && dropdownMenu) {
+          profileButton.addEventListener("click", function () {
+            dropdownMenu.classList.toggle("hidden");
+          });
+
+          document.addEventListener("click", function (event) {
+            if (
+              !profileButton.contains(event.target) &&
+              !dropdownMenu.contains(event.target)
+            ) {
+              dropdownMenu.classList.add("hidden");
+            }
+          });
+        }
+
+        draggableItems.forEach((item) => {
+          item.addEventListener("dragstart", function (e) {
+            e.dataTransfer.setData("text/plain", e.target.id);
+          });
+        });
+
+        const dropZone = document.getElementById("drop-zone");
+        if (dropZone) {
+          dropZone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+          });
+
+          dropZone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData("text");
+            const draggableElement = document.getElementById(id);
+            e.target.appendChild(draggableElement);
+          });
+        }
+
+        searchInput.addEventListener("input", function () {
+          const query = searchInput.value.trim().toLowerCase();
+          searchResults.innerHTML = "";
+
+          if (query === "") {
+            allSections.forEach((section) =>
+              section.classList.remove("hidden")
+            );
+            return;
+          }
+
+          allSections.forEach((section) => section.classList.add("hidden"));
+
+          let foundItems = false;
+
+          allItems.forEach((item) => {
+            const title = item.querySelector("h3").textContent.toLowerCase();
+            const description = item
+              .querySelector("p")
+              .textContent.toLowerCase();
+
+            if (title.includes(query) || description.includes(query)) {
+              const clone = item.cloneNode(true);
+              searchResults.appendChild(clone);
+              foundItems = true;
+            }
+          });
+
+          if (!foundItems) {
+            searchResults.innerHTML =
+              "<p style='color: #9ca3af;'>Nenhum resultado encontrado.</p>";
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="logo">Bíblia</div>
+      <div class="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </header>
+    <div class="navbar">
+      <a href="../Home/Home.html">Home</a>
+      <a href="../Home/igrejas.html">Igrejas</a>
+      <a href="../Home/arrecadacao.html">Arrecadação</a>
+      <a href="../Home/Educa.html">EducaFlix</a>
+      <a href="../Home/palavra.html">Palavra</a>
+      <a href="../Home/Bíblia.html">Bíblia</a>
+    </div>
+    <main>
+      <section>
+        <h2>Procurar</h2>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Procure por uma aula..."
+        />
+        <div class="grid" id="search-results"></div>
+      </section>
+      <section id="default-items">
+        <h2>Pentateuco</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Gênesis"
+            />
+            <h3>Gênesis</h3>
+            <p>Ler Gênesis</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Êxodo"
+            />
+            <h3>Êxodo</h3>
+            <p>Ler Êxodo</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="Levítico"
+            />
+            <h3>Levítico</h3>
+            <p>Ler Levítico</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Números"
+            />
+            <h3>Números</h3>
+            <p>Ler Números</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Deuteronômio"
+            />
+            <h3>Deuteronômio</h3>
+            <p>Ler Deuteronômio</p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>Históricos</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/x4jybq1wIcY9JVSL6ioNuyDEEMq2yHzY5nS9gsN6qyb8or8E.jpg"
+              alt="Josué"
+            />
+            <h3>Josué</h3>
+            <p>Ler Josué</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/nfLLmz1WQBQLNi95uE0iaGDibkjfmDQOZT31eOqC2cFmHdlnA.jpg"
+              alt="Juízes"
+            />
+            <h3>Juízes</h3>
+            <p>Ler Juízes</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/xlEJ8ILKYir3Mh4pmeHWvFzeEsTQ6Y1CAXMPPB9QPewdHdlnA.jpg"
+              alt="Rute"
+            />
+            <h3>Rute</h3>
+            <p>Ler Rute</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/D2QEpCncaOrtBdpu9ODep5GGdGA5woCINfvxe5fozUejeor8E.jpg"
+              alt="1 Samuel"
+            />
+            <h3>1 Samuel</h3>
+            <p>Ler 1 Samuel</p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/x4jybq1wIcY9JVSL6ioNuyDEEMq2yHzY5nS9gsN6qyb8or8E.jpg"
+              alt="2 Samuel"
+            />
+            <h3>2 Samuel</h3>
+            <p>Ler 2 Samuel</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/nfLLmz1WQBQLNi95uE0iaGDibkjfmDQOZT31eOqC2cFmHdlnA.jpg"
+              alt="1 Reis"
+            />
+            <h3>1 Reis</h3>
+            <p>Ler 1 Reis</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/xlEJ8ILKYir3Mh4pmeHWvFzeEsTQ6Y1CAXMPPB9QPewdHdlnA.jpg"
+              alt="2 Reis"
+            />
+            <h3>2 Reis</h3>
+            <p>Ler 2 Reis</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/D2QEpCncaOrtBdpu9ODep5GGdGA5woCINfvxe5fozUejeor8E.jpg"
+              alt="1 Crônicas"
+            />
+            <h3>1 Crônicas</h3>
+            <p>Ler 1 Crônicas</p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/x4jybq1wIcY9JVSL6ioNuyDEEMq2yHzY5nS9gsN6qyb8or8E.jpg"
+              alt="2 Crônicas"
+            />
+            <h3>2 Crônicas</h3>
+            <p>Ler 2 Crônicas</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/nfLLmz1WQBQLNi95uE0iaGDibkjfmDQOZT31eOqC2cFmHdlnA.jpg"
+              alt="Esdras"
+            />
+            <h3>Esdras</h3>
+            <p>Ler Esdras</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/xlEJ8ILKYir3Mh4pmeHWvFzeEsTQ6Y1CAXMPPB9QPewdHdlnA.jpg"
+              alt="Neemias"
+            />
+            <h3>Neemias</h3>
+            <p>Ler Neemias</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/D2QEpCncaOrtBdpu9ODep5GGdGA5woCINfvxe5fozUejeor8E.jpg"
+              alt="Ester"
+            />
+            <h3>Ester</h3>
+            <p>Ler Ester</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Poéticos</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/2OfcfAf2dgTHRoi93nek2B0Se4nQVQeNOQJgvyeqn6PyCrW5JA.jpg"
+              alt="Jó"
+            />
+            <h3>Jó</h3>
+            <p>Ler Jó</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/hcepm2GoZmXeQUb4dfNAU96NNAVsLjGNM0RSRdGVWZAmAeKPB.jpg"
+              alt="Salmos"
+            />
+            <h3>Salmos</h3>
+            <p>Ler Salmos</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/11B36SS2ik57JlL3cG2ENr0ZOHKMc2UI5Yz1Z3W2hGI5vr8E.jpg"
+              alt="Provérbios"
+            />
+            <h3>Provérbios</h3>
+            <p>Ler Provérbios</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/11B36SS2ik57JlL3cG2ENr0ZOHKMc2UI5Yz1Z3W2hGI5vr8E.jpg"
+              alt="Eclesiastes"
+            />
+            <h3>Eclesiastes</h3>
+            <p>Ler Eclesiastes</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/11B36SS2ik57JlL3cG2ENr0ZOHKMc2UI5Yz1Z3W2hGI5vr8E.jpg"
+              alt="Cantares"
+            />
+            <h3>Cantares</h3>
+            <p>Ler Cantares</p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>Proféticos Maiores</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Isaías"
+            />
+            <h3>Isaías</h3>
+            <p>Ler Isaías</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Jeremias"
+            />
+            <h3>Jeremias</h3>
+            <p>Ler Jeremias</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Lamentações"
+            />
+            <h3>Lamentações</h3>
+            <p>Ler Lamentações</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Ezequiel"
+            />
+            <h3>Ezequiel</h3>
+            <p>Ler Ezequiel</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Daniel"
+            />
+            <h3>Daniel</h3>
+            <p>Ler Daniel</p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h2>Proféticos Menores</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Oséias"
+            />
+            <h3>Oséias</h3>
+            <p>Ler Oseias</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Joel"
+            />
+            <h3>Joel</h3>
+            <p>Ler Joel</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Amós"
+            />
+            <h3>Amós</h3>
+            <p>Ler Amós</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Jonas"
+            />
+            <h3>Jonas</h3>
+            <p>Ler Jones</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Obadias"
+            />
+            <h3>Obadias</h3>
+            <p>Ler Obadias</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Miquéias"
+            />
+            <h3>Miquéias</h3>
+            <p>Ler Miqueias</p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Naum"
+            />
+            <h3>Naum</h3>
+            <p>Ler Naum</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Habacuque"
+            />
+            <h3>Habacuque</h3>
+            <p>Ler Habacuque</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Sofonias"
+            />
+            <h3>Sofonias</h3>
+            <p>Ler Sofonias</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Ageu"
+            />
+            <h3>Ageu</h3>
+            <p>Ler Ageu</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Zacarias"
+            />
+            <h3>Zacarias</h3>
+            <p>Ler Zacarias</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Malaquias"
+            />
+            <h3>Malaquias</h3>
+            <p>Ler Malaquias</p>
+          </div>
+        </div>
+      </section>
+      <section id="default-items">
+        <h2>Evangelho</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Mateus"
+            />
+            <h3>Mateus</h3>
+            <p>Ler Evangelho de Mateus</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Marcos"
+            />
+            <h3>Marcos</h3>
+            <p>Ler Evangelho de Marcos</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="Lucas"
+            />
+            <h3>Lucas</h3>
+            <p>Ler Evangelho de Lucas</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="João"
+            />
+            <h3>João</h3>
+            <p>Ler Evangelho de Lucas</p>
+          </div>
+        </div>
+      </section>
+      <section id="default-items">
+        <h2>Epístolas Paulinas</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Romanos"
+            />
+            <h3>Romanos</h3>
+            <p>Ler Romanos</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="1 Coríntios"
+            />
+            <h3>1 Coríntios</h3>
+            <p>Ler 1 Coríntios</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="2 Coríntios"
+            />
+            <h3>2 Coríntios</h3>
+            <p>Ler 2 Coríntios</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Gálatas"
+            />
+            <h3>Gálatas</h3>
+            <p>Ler Gálatas</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Efésios"
+            />
+            <h3>Efésios</h3>
+            <p>Ler Efésios</p>
+          </div>
+        </div>
+      </section>
+      <section id="default-items">
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Filipenses"
+            />
+            <h3>Filipenses</h3>
+            <p>Ler Filipenses</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Colossenses"
+            />
+            <h3>Colossenses</h3>
+            <p>Ler Colossenses</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="1 Tessalonicenses"
+            />
+            <h3>1 Tessalonicenses</h3>
+            <p>Ler 1 Tessalonicenses</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="2 Tessalonicenses"
+            />
+            <h3>2 Tessalonicenses</h3>
+            <p>Ler 2 Tessalonicenses</p>
+          </div>
+        </div>
+      </section>
+      <section id="default-items">
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="1 Timóteo"
+            />
+            <h3>1 Timóteo</h3>
+            <p>Ler 1 Timóteo</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="2 Timóteo"
+            />
+            <h3>2 Timóteo</h3>
+            <p>Ler 2 Timóteo</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="Tito"
+            />
+            <h3>Tito</h3>
+            <p>Ler Tito</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Filemom"
+            />
+            <h3>Filemom</h3>
+            <p>Ler Filemom</p>
+          </div>
+        </div>
+      </section>
+      <section id="default-items">
+        <h2>Epístolas Gerais</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Hebreus"
+            />
+            <h3>Hebreus</h3>
+            <p>Ler Hebreus</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Tiago"
+            />
+            <h3>Tiago</h3>
+            <p>Ler Tiago</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="1 Pedro"
+            />
+            <h3>1 Pedro</h3>
+            <p>Ler 1 Pedro</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="2 Pedro"
+            />
+            <h3>2 Pedro</h3>
+            <p>Ler 2 Pedro</p>
+          </div>
+        </div>
+      </section>
+      <section id="default-items">
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="1 João"
+            />
+            <h3>1 João</h3>
+            <p>Ler 1 João</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="2 João"
+            />
+            <h3>2 João</h3>
+            <p>Ler 2 João</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="3 João"
+            />
+            <h3>3 João</h3>
+            <p>Ler 1 João</p>
+          </div>
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Judas"
+            />
+            <h3>Judas</h3>
+            <p>Ler Judas</p>
+          </div>
+        </div>
+      </section>
+      <section id="default-items">
+        <h2>Profético</h2>
+        <div class="grid">
+          <div class="item">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Apocalipse"
+            />
+            <h3>Apocalipse</h3>
+            <p>Ler Apocalipse</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <p>© 2025 Educaflix | By Mares.</p>
+    </footer>
+  </body>
+</html>
