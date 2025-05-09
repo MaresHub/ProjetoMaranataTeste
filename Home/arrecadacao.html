@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arrecadação</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      .body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-image: url("../Imagens/banner1.webp");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        color: white;
+      }
+
+      .navbar {
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        padding: 20px 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      .navbar__links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .navbar__link {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: clamp(14px, 2vw, 16px);
+        transition: background-color 0.3s;
+      }
+
+      .navbar__link:hover {
+        background-color: #4caf50;
+      }
+
+      .navbar__toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        position: absolute;
+        right: 20px;
+      }
+
+      .navbar__toggle-line {
+        height: 3px;
+        width: 25px;
+        background-color: white;
+        margin: 4px 0;
+        transition: 0.4s;
+      }
+
+      .content {
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .mission,
+      .campaigns,
+      .campaign-form {
+        background-color: rgba(0, 0, 0, 0.7);
+        margin: 20px auto;
+        padding: 15px;
+        border-radius: 8px;
+        max-width: 600px;
+      }
+
+      .campaign-form--hidden {
+        display: none;
+      }
+
+      .footer {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+      }
+
+      .modal__body {
+        color: black;
+      }
+
+      .modal__items-list {
+        display: none;
+      }
+
+      .modal__items-section {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          justify-content: space-between;
+        }
+
+        .navbar__toggle {
+          display: flex;
+        }
+
+        .navbar__links {
+          position: absolute;
+          top: 60px;
+          left: 0;
+          width: 100%;
+          background-color: rgba(0, 0, 0, 0.95);
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          padding: 30px 0;
+          min-height: 300px;
+          display: none;
+        }
+
+        .navbar__links--active {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+  <body class="body">
+    <div class="navbar" id="navbar">
+      <div class="navbar__links" id="navLinks">
+        <a href="../Home/Home.html" class="navbar__link">Home</a>
+        <a href="../Home/igrejas.html" class="navbar__link">Igrejas</a>
+        <a href="../Home/arrecadacao.html" class="navbar__link">Arrecadação</a>
+        <a href="../Home/Educa.html" class="navbar__link">EducaFlix</a>
+        <a href="../Home/palavra.html" class="navbar__link">Palavra</a>
+        <a href="../Home/Bíblia.html" class="navbar__link">Bíblia</a>
+      </div>
+      <div class="navbar__toggle" onclick="toggleMenu()">
+        <span class="navbar__toggle-line"></span>
+        <span class="navbar__toggle-line"></span>
+        <span class="navbar__toggle-line"></span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="mission">
+        <h2 class="mission__title">Nossa Missão</h2>
+        <p class="mission__description">
+          Nosso objetivo é arrecadar alimentos e itens essenciais para ajudar
+          aqueles que mais precisam em nossa comunidade.
+        </p>
+      </div>
+
+      <div class="campaigns">
+        <h2 class="campaigns__title">Campanhas Ativas</h2>
+        <ul class="campaigns__list">
+          <li class="campaigns__item campaigns__item--empty">
+            Nenhuma campanha ativa no momento. Crie uma nova campanha!
+          </li>
+        </ul>
+        <button
+          class="btn btn-success campaigns__button"
+          onclick="showCampaignForm();"
+        >
+          Criar Campanha
+        </button>
+      </div>
+
+      <div class="campaign-form campaign-form--hidden">
+        <h2 class="campaign-form__title">Criar Campanha de Arrecadação</h2>
+        <form class="campaign-form__form" onsubmit="saveCampaign(event);">
+          <input
+            type="text"
+            id="church"
+            class="form-control campaign-form__input"
+            placeholder="Igreja Sediada da Campanha"
+            required
+          />
+          <input
+            type="text"
+            id="location"
+            class="form-control campaign-form__input"
+            placeholder="Local da Arrecadação"
+            required
+          />
+          <input
+            type="text"
+            id="institution"
+            class="form-control campaign-form__input"
+            placeholder="Instituição que os itens serão doados"
+            required
+          />
+          <textarea
+            id="info"
+            class="form-control campaign-form__textarea"
+            rows="4"
+            placeholder="Detalhes da Campanha"
+            required
+          ></textarea>
+
+          <div class="form-group campaign-form__items-group">
+            <label class="campaign-form__items-label"
+              >Itens a serem arrecadados:</label
+            >
+            <div
+              class="d-flex flex-wrap justify-content-center campaign-form__items-container"
+            >
+              <div class="form-check mx-2 campaign-form__item">
+                <input
+                  class="form-check-input campaign-form__checkbox"
+                  type="checkbox"
+                  id="food"
+                  value="Alimentos Não Perecíveis"
+                />
+                <label
+                  class="form-check-label campaign-form__checkbox-label"
+                  for="food"
+                  >Alimentos Não Perecíveis</label
+                >
+              </div>
+              <div class="form-check mx-2 campaign-form__item">
+                <input
+                  class="form-check-input campaign-form__checkbox"
+                  type="checkbox"
+                  id="clothes"
+                  value="Roupas"
+                />
+                <label
+                  class="form-check-label campaign-form__checkbox-label"
+                  for="clothes"
+                  >Roupas</label
+                >
+              </div>
+              <div class="form-check mx-2 campaign-form__item">
+                <input
+                  class="form-check-input campaign-form__checkbox"
+                  type="checkbox"
+                  id="hygiene"
+                  value="Itens de Higiene Pessoal"
+                />
+                <label
+                  class="form-check-label campaign-form__checkbox-label"
+                  for="hygiene"
+                  >Itens de Higiene Pessoal</label
+                >
+              </div>
+              <div class="form-check mx-2 campaign-form__item">
+                <input
+                  class="form-check-input campaign-form__checkbox"
+                  type="checkbox"
+                  id="animalItems"
+                  value="Itens para Instituição de Animais"
+                />
+                <label
+                  class="form-check-label campaign-form__checkbox-label"
+                  for="animalItems"
+                  >Itens para Instituição de Animais</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary campaign-form__submit">
+            Salvar Campanha
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="campaignDetailModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="campaignDetailModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="campaignDetailModalLabel">
+              Detalhes da Campanha
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body modal__body">
+            <p>
+              <strong>Igreja:</strong>
+              <span id="modalChurch" class="modal__church"></span>
+            </p>
+            <p>
+              <strong>Local:</strong>
+              <span id="modalLocation" class="modal__location"></span>
+            </p>
+            <p>
+              <strong>Instituição:</strong>
+              <span id="modalInstitution" class="modal__institution"></span>
+            </p>
+            <p>
+              <strong>Detalhes:</strong>
+              <span id="modalInfo" class="modal__info"></span>
+            </p>
+            <p>
+              <strong>Itens Arrecadados:</strong>
+              <span id="modalItems" class="modal__items"></span>
+            </p>
+            <button
+              class="btn btn-info modal__toggle-items"
+              id="showItemsButton"
+              onclick="toggleItemsList()"
+            >
+              Mostrar Itens Detalhados
+            </button>
+            <div id="itemsList" class="modal__items-list">
+              <div id="foodItems" class="modal__items-section">
+                <h5 class="modal__items-title">Alimentos Não Perecíveis</h5>
+                <ul class="modal__items-sublist">
+                  <li class="modal__items-subitem">Arroz</li>
+                  <li class="modal__items-subitem">Feijão</li>
+                  <li class="modal__items-subitem">Lentilhas</li>
+                  <li class="modal__items-subitem">Trigo</li>
+                  <li class="modal__items-subitem">Aveia</li>
+                  <li class="modal__items-subitem">Milho</li>
+                  <li class="modal__items-subitem">Macarrão</li>
+                  <li class="modal__items-subitem">Espaguete</li>
+                  <li class="modal__items-subitem">Milho enlatado</li>
+                  <li class="modal__items-subitem">Ervilha enlatada</li>
+                  <li class="modal__items-subitem">Sopa enlatada</li>
+                  <li class="modal__items-subitem">Frutas enlatadas</li>
+                  <li class="modal__items-subitem">Feijão enlatado</li>
+                  <li class="modal__items-subitem">Farinha de trigo</li>
+                  <li class="modal__items-subitem">Açúcar</li>
+                  <li class="modal__items-subitem">Sal</li>
+                  <li class="modal__items-subitem">Fécula de batata</li>
+                  <li class="modal__items-subitem">Amido de milho</li>
+                  <li class="modal__items-subitem">Óleo de soja</li>
+                  <li class="modal__items-subitem">Óleo de canola</li>
+                  <li class="modal__items-subitem">Azeite de oliva</li>
+                  <li class="modal__items-subitem">Óleo de coco</li>
+                  <li class="modal__items-subitem">Leite em pó</li>
+                  <li class="modal__items-subitem">Fubá</li>
+                  <li class="modal__items-subitem">Farinha de mandioca</li>
+                  <li class="modal__items-subitem">Farinha de milho</li>
+                  <li class="modal__items-subitem">Macarrão instantâneo</li>
+                  <li class="modal__items-subitem">Sopas desidratadas</li>
+                  <li class="modal__items-subitem">Leite condensado</li>
+                  <li class="modal__items-subitem">Creme de leite</li>
+                  <li class="modal__items-subitem">Achocolatado em pó</li>
+                  <li class="modal__items-subitem">Biscoitos e bolachas</li>
+                  <li class="modal__items-subitem">Cereais matinais</li>
+                  <li class="modal__items-subitem">Grão-de-bico</li>
+                  <li class="modal__items-subitem">Ervilha seca</li>
+                  <li class="modal__items-subitem">Soja em grãos</li>
+                  <li class="modal__items-subitem">Frutas secas</li>
+                  <li class="modal__items-subitem">Castanhas</li>
+                  <li class="modal__items-subitem">Batata palha</li>
+                  <li class="modal__items-subitem">Gelatina em pó</li>
+                  <li class="modal__items-subitem">Café em pó</li>
+                  <li class="modal__items-subitem">Suco em pó</li>
+                  <li class="modal__items-subitem">Molho de tomate</li>
+                  <li class="modal__items-subitem">Mel</li>
+                  <li class="modal__items-subitem">Chocolate em barra</li>
+                  <li class="modal__items-subitem">Produtos enlatados</li>
+                  <li class="modal__items-subitem">Farinha de arroz</li>
+                  <li class="modal__items-subitem">Leite de coco</li>
+                  <li class="modal__items-subitem">Tapioca</li>
+                  <li class="modal__items-subitem">Pipoca</li>
+                  <li class="modal__items-subitem">Salsichas enlatadas</li>
+                  <li class="modal__items-subitem">Azeitonas em conserva</li>
+                  <li class="modal__items-subitem">Cuscuz</li>
+                  <li class="modal__items-subitem">Pasta de amendoim</li>
+                  <li class="modal__items-subitem">Bacon em conserva</li>
+                  <li class="modal__items-subitem">Pão de forma embalado</li>
+                  <li class="modal__items-subitem">
+                    Sardinhas e outros peixes enlatados
+                  </li>
+                  <li class="modal__items-subitem">Chá</li>
+                  <li class="modal__items-subitem">Pasta de tomate</li>
+                </ul>
+              </div>
+              <div id="clothesItems" class="modal__items-section">
+                <h5 class="modal__items-title">Roupas</h5>
+                <ul class="modal__items-sublist">
+                  <li class="modal__items-subitem">
+                    Camisetas (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Calças (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Bermudas e Shorts (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Vestidos e Saias (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Casacos, jaquetas e blazers (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Pijamas (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Roupas de cama (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">Roupas íntimas (Novas)</li>
+                  <li class="modal__items-subitem">
+                    Meias, luvas e toucas (Novas ou Em Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Sapatilhas, sandálias, tênis, chinelo e botas (Novas ou Em
+                    Excelente Estado)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Bonés e chapéus (Novas ou Em Excelente Estado)
+                  </li>
+                </ul>
+              </div>
+              <div id="hygieneItems" class="modal__items-section">
+                <h5 class="modal__items-title">Produtos de Higiene</h5>
+                <ul class="modal__items-sublist">
+                  <li class="modal__items-subitem">
+                    Sabonetes (líquidos e em barra)
+                  </li>
+                  <li class="modal__items-subitem">Shampoo e condicionador</li>
+                  <li class="modal__items-subitem">
+                    Creme dental e escovas de dente
+                  </li>
+                  <li class="modal__items-subitem">Desodorantes</li>
+                  <li class="modal__items-subitem">Papel higiênico</li>
+                  <li class="modal__items-subitem">
+                    Toalhas (de banho, rosto e mãos)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Álcool em gel ou antisséptico
+                  </li>
+                  <li class="modal__items-subitem">Lenços umedecidos</li>
+                  <li class="modal__items-subitem">
+                    Escovas de cabelo e pentes
+                  </li>
+                  <li class="modal__items-subitem">Absorventes (femininos)</li>
+                  <li class="modal__items-subitem">Protetor solar</li>
+                  <li class="modal__items-subitem">
+                    Pomadas e cremes para assaduras
+                  </li>
+                  <li class="modal__items-subitem">
+                    Higienizador bucal (enxaguante)
+                  </li>
+                  <li class="modal__items-subitem">Cotonetes e algodão</li>
+                  <li class="modal__items-subitem">Fio dental</li>
+                </ul>
+              </div>
+              <div id="animalItemsList" class="modal__items-section">
+                <h5 class="modal__items-title">
+                  Itens para Instituição de Animais
+                </h5>
+                <ul class="modal__items-sublist">
+                  <li class="modal__items-subitem">
+                    Ração seca e úmida para cães, gatos e outros animais (de
+                    diferentes idades e portes)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Petiscos e biscuits para cães e gatos
+                  </li>
+                  <li class="modal__items-subitem">
+                    Sementes e rações específicas para pássaros, roedores e
+                    outros animais pequenos
+                  </li>
+                  <li class="modal__items-subitem">
+                    Alimentos especiais (para animais com necessidades
+                    dietéticas específicas, como alimentos sem grãos ou sem
+                    corantes)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Leite em pó ou ração específica para filhotes (de cães,
+                    gatos, roedores, etc.)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Shampoos e condicionadores específicos para cães, gatos e
+                    outros animais
+                  </li>
+                  <li class="modal__items-subitem">
+                    Escovas e pentes para cães, gatos e pequenos animais
+                  </li>
+                  <li class="modal__items-subitem">
+                    Anti-pulgas e vermífugos (com prescrição veterinária, se
+                    necessário)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Fraldas e tapetes higiênicos para cães e gatos
+                  </li>
+                  <li class="modal__items-subitem">
+                    Pomadas cicatrizantes e antissépticos para feridas
+                  </li>
+                  <li class="modal__items-subitem">
+                    Repelentes para insetos e carrapatos
+                  </li>
+                  <li class="modal__items-subitem">
+                    Álcool em gel ou antissépticos para limpeza de ferimentos
+                  </li>
+                  <li class="modal__items-subitem">
+                    Coleiras e guias para cães e gatos
+                  </li>
+                  <li class="modal__items-subitem">
+                    Camas, almofadas e cobertores para animais (de todos os
+                    portes)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Brinquedos (cordas, bolas, brinquedos interativos,
+                    arranhadores para gatos)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Caixas de transporte (para cães, gatos, roedores e pássaros)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Peitorais e coleiras para gatos
+                  </li>
+                  <li class="modal__items-subitem">
+                    Escovas de dentes e fio dental para animais
+                  </li>
+                  <li class="modal__items-subitem">
+                    Vitaminas e suplementos alimentares para animais
+                  </li>
+                  <li class="modal__items-subitem">Ração para peixes</li>
+                  <li class="modal__items-subitem">
+                    Cobertores e toalhas para aquecer e secar os animais
+                  </li>
+                  <li class="modal__items-subitem">
+                    Sacos de lixo para resíduos animais
+                  </li>
+                  <li class="modal__items-subitem">
+                    Produtos de limpeza (detergentes não tóxicos para a limpeza
+                    de gaiolas e áreas comuns)
+                  </li>
+                  <li class="modal__items-subitem">
+                    Kit de primeiros socorros veterinário
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      let campaigns = [];
+      let selectedCampaign = null;
+
+      function showCampaignForm() {
+        document
+          .querySelector(".campaign-form")
+          .classList.remove("campaign-form--hidden");
+      }
+
+      function saveCampaign(event) {
+        event.preventDefault();
+
+        const church = document.getElementById("church").value;
+        const location = document.getElementById("location").value;
+        const institution = document.getElementById("institution").value;
+        const info = document.getElementById("info").value;
+
+        const selectedItems = [];
+        if (document.getElementById("food").checked)
+          selectedItems.push("Alimentos Não Perecíveis");
+        if (document.getElementById("clothes").checked)
+          selectedItems.push("Roupas");
+        if (document.getElementById("hygiene").checked)
+          selectedItems.push("Itens de Higiene Pessoal");
+        if (document.getElementById("animalItems").checked)
+          selectedItems.push("Itens para Instituição de Animais");
+
+        const newCampaign = {
+          church,
+          location,
+          institution,
+          info,
+          items: selectedItems,
+        };
+        campaigns.push(newCampaign);
+
+        updateActiveCampaigns();
+        document
+          .querySelector(".campaign-form")
+          .classList.add("campaign-form--hidden");
+        document.querySelector("form").reset();
+      }
+
+      function updateActiveCampaigns() {
+        const campaignsList = document.querySelector(".campaigns__list");
+        campaignsList.innerHTML = "";
+
+        if (campaigns.length === 0) {
+          campaignsList.innerHTML =
+            "<li class='campaigns__item campaigns__item--empty'>Nenhuma campanha ativa no momento. Crie uma nova campanha!</li>";
+        } else {
+          campaigns.forEach((campaign, index) => {
+            const li = document.createElement("li");
+            li.className = "campaigns__item";
+
+            li.textContent = `Igreja: ${campaign.church}, Local: ${campaign.location}`;
+
+            const viewButton = document.createElement("button");
+            viewButton.textContent = "Visualizar";
+            viewButton.className = "btn btn-info btn-sm ml-2";
+            viewButton.onclick = () => showCampaignDetails(index);
+
+            li.appendChild(viewButton);
+            campaignsList.appendChild(li);
+          });
+        }
+      }
+
+      function showCampaignDetails(index) {
+        selectedCampaign = campaigns[index];
+
+        document.getElementById("modalChurch").textContent =
+          selectedCampaign.church;
+        document.getElementById("modalLocation").textContent =
+          selectedCampaign.location;
+        document.getElementById("modalInstitution").textContent =
+          selectedCampaign.institution;
+        document.getElementById("modalInfo").textContent =
+          selectedCampaign.info;
+        document.getElementById("modalItems").textContent =
+          selectedCampaign.items.join(", ");
+
+        document.getElementById("itemsList").style.display = "none";
+
+        $("#campaignDetailModal").modal("show");
+      }
+
+      function toggleItemsList() {
+        const itemsList = document.getElementById("itemsList");
+        const isVisible = itemsList.style.display === "block";
+
+        document.querySelectorAll(".modal__items-section").forEach((item) => {
+          item.style.display = "none";
+        });
+
+        if (!isVisible && selectedCampaign) {
+          selectedCampaign.items.forEach((item) => {
+            switch (item) {
+              case "Alimentos Não Perecíveis":
+                document.getElementById("foodItems").style.display = "block";
+                break;
+              case "Roupas":
+                document.getElementById("clothesItems").style.display = "block";
+                break;
+              case "Itens de Higiene Pessoal":
+                document.getElementById("hygieneItems").style.display = "block";
+                break;
+              case "Itens para Instituição de Animais":
+                document.getElementById("animalItemsList").style.display =
+                  "block";
+                break;
+            }
+          });
+        }
+
+        itemsList.style.display = isVisible ? "none" : "block";
+      }
+
+      function toggleMenu() {
+        const navLinks = document.getElementById("navLinks");
+        navLinks.classList.toggle("navbar__links--active");
+      }
+    </script>
+  </body>
+</html>

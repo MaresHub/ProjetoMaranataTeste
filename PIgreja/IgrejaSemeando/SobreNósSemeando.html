@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Igreja Semeando - Sobre Nós</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+
+      header {
+        background-color: #0033a0;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        position: relative;
+        z-index: 1000;
+      }
+
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+      }
+
+      .menu-toggle span {
+        height: 3px;
+        width: 25px;
+        background-color: white;
+        margin: 4px 0;
+        transition: 0.4s;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .nav-links a,
+      .nav-link-voltar a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover,
+      .nav-link-voltar a:hover {
+        background-color: #002080;
+      }
+
+      .menu {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        gap: 15px;
+      }
+
+      .menu li a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+      }
+
+      .banner img {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+      }
+
+      .content {
+        padding: 20px;
+        text-align: justify;
+        max-width: 800px;
+        margin: auto;
+      }
+
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: flex;
+        }
+
+        .nav-links {
+          position: absolute;
+          top: 60px;
+          left: 0;
+          width: 100%;
+          background-color: #0033a0;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          padding: 20px 0;
+          display: none;
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        .menu {
+          display: none;
+        }
+
+        .nav-link-voltar {
+          margin-left: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="nav-links" id="navLinks">
+        <a href="../IgrejaSemeando/IgrejaSemeando.html">Semeando</a>
+        <a href="../IgrejaSemeando/SobreNósSemeando.html">Sobre Nós</a>
+        <a href="../IgrejaSemeando/CultosSemeando.html">Cultos</a>
+      </div>
+      <div class="nav-link-voltar">
+        <a href="../../Home/Home.html">Voltar</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="banner">
+        <img src="IgrejaSemeando.png" alt="Igreja Semeando" />
+      </section>
+      <section class="content">
+        <h2>Sobre Nós</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+          convallis libero sed felis cursus, a feugiat eros sagittis. Fusce
+          auctor, ligula in ultrices sodales, purus quam bibendum lorem, eu
+          facilisis neque purus vel erat.
+        </p>
+        <p>
+          Vestibulum hendrerit sapien at urna cursus, et feugiat orci pharetra.
+          Morbi posuere arcu vel risus dignissim, id tincidunt mi bibendum. Cras
+          vitae sem id neque vulputate laoreet nec id nisl. Integer luctus
+          luctus nisi, ac volutpat elit tempor ac.
+        </p>
+        <p>
+          Curabitur dictum, felis id feugiat aliquet, mauris felis luctus neque,
+          in sodales ipsum mi ut erat. Proin tempor, nisl ut interdum cursus,
+          nisi purus fringilla arcu, et interdum velit libero sed nisi.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      function toggleMenu() {
+        const nav = document.getElementById("navLinks");
+        nav.classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>

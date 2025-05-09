@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Educaflix e GospelFlix - Seu Hub de Aprendizagem e Filmes Gospel
+    </title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html {
+        font-size: 62.5%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #111827;
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        font-size: 1.6rem;
+        line-height: 1.5;
+      }
+
+      .header {
+        background-color: #1f2937;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
+      }
+
+      .header__logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .header__toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        position: absolute;
+        right: 1rem;
+        z-index: 60;
+      }
+
+      .header__toggle-line {
+        height: 0.3rem;
+        width: 2.5rem;
+        background-color: white;
+        margin: 0.4rem 0;
+        transition: 0.4s;
+      }
+
+      .navbar {
+        background-color: #1f2937;
+        padding: 1rem;
+        margin-top: 4rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar__link {
+        color: white;
+        text-decoration: none;
+        margin: 0 1rem;
+        transition: color 0.3s;
+      }
+
+      .navbar__link:hover {
+        color: #9ca3af;
+      }
+
+      .main {
+        padding: 2rem;
+        margin-top: 8rem;
+        flex: 1;
+        padding-bottom: 4rem;
+      }
+
+      .section {
+        margin-bottom: 1rem;
+      }
+
+      .section__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 1rem;
+        background-color: #1f2937;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .section__title {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .section__icon {
+        transition: transform 0.3s;
+      }
+
+      .section__header--active .section__icon {
+        transform: rotate(180deg);
+      }
+
+      .section__content {
+        display: none;
+        padding: 0.5rem;
+      }
+
+      .section__header--active + .section__content {
+        display: block;
+      }
+
+      .search {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: #1f2937;
+        color: white;
+        border: none;
+        font-size: 1.6rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      }
+
+      .card {
+        background-color: #1f2937;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        transition: transform 0.3s;
+      }
+
+      .card:hover {
+        transform: scale(1.05);
+      }
+
+      .card__image {
+        width: 100%;
+        height: 20rem;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .card__title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .card__description {
+        color: #9ca3af;
+      }
+
+      .footer {
+        background-color: #1f2937;
+        padding: 1rem;
+        text-align: center;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+        margin-top: auto;
+      }
+
+      /* Menu dropdown */
+      .dropdown {
+        position: relative;
+      }
+
+      .dropdown__menu {
+        position: absolute;
+        right: 1rem;
+        margin-top: 0.5rem;
+        width: 12rem;
+        background-color: #1f2937;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
+        display: none;
+        z-index: 60;
+      }
+
+      .dropdown__menu--hidden {
+        display: none;
+      }
+
+      .dropdown__zone {
+        padding: 1rem;
+      }
+
+      .draggable {
+        background-color: #374151;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+        cursor: move;
+      }
+
+      @media (max-width: 1200px) {
+        html {
+          font-size: 58%;
+        }
+
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+        }
+
+        .card__image {
+          height: 18rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 1.5rem;
+        }
+
+        .header__toggle {
+          display: flex;
+        }
+
+        .navbar {
+          position: fixed;
+          top: 6rem;
+          left: 0;
+          width: 100%;
+          display: none;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 1rem;
+          z-index: 40;
+        }
+
+        .navbar--active {
+          display: flex;
+        }
+
+        .navbar__link {
+          margin: 0.5rem 0;
+          padding: 0.5rem 1rem;
+          width: 100%;
+        }
+
+        .main {
+          margin-top: 6rem;
+          padding: 1rem;
+          padding-bottom: 4rem;
+        }
+
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        }
+
+        .card__image {
+          height: 15rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        html {
+          font-size: 55%;
+        }
+
+        .header {
+          padding: 1.2rem;
+        }
+
+        .header__toggle {
+          right: 1.5rem;
+        }
+
+        .section__header {
+          padding: 0.8rem;
+        }
+
+        .card {
+          padding: 0.8rem;
+        }
+      }
+
+      @media (max-width: 400px) {
+        html {
+          font-size: 50%;
+        }
+
+        .header {
+          padding: 1rem;
+        }
+
+        .navbar {
+          top: 5rem;
+        }
+
+        .main {
+          margin-top: 5rem;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__logo">Educaflix</div>
+      <div class="header__toggle" id="menuToggle">
+        <span class="header__toggle-line"></span>
+        <span class="header__toggle-line"></span>
+        <span class="header__toggle-line"></span>
+      </div>
+    </header>
+    <nav class="navbar" id="navbar">
+      <a href="../Home/Home.html" class="navbar__link">Home</a>
+      <a href="../Home/igrejas.html" class="navbar__link">Igrejas</a>
+      <a href="../Home/arrecadacao.html" class="navbar__link">Arrecadação</a>
+      <a href="../Home/Educa.html" class="navbar__link">EducaFlix</a>
+      <a href="../Home/palavra.html" class="navbar__link">Palavra</a>
+      <a href="../Home/Bíblia.html" class="navbar__link">Bíblia</a>
+    </nav>
+    <main class="main">
+      <section class="section">
+        <h2 class="section__title">Procurar</h2>
+        <input
+          type="text"
+          id="search-input"
+          class="search"
+          placeholder="Procure por uma aula..."
+        />
+        <div class="grid" id="search-results"></div>
+      </section>
+
+      <!-- Matérias Escolares -->
+      <div class="section__header">
+        <h2 class="section__title">Matérias Escolares</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Matemática"
+              class="card__image"
+            />
+            <h3 class="card__title">Matemática</h3>
+            <p class="card__description">
+              Aprenda os fundamentos de álgebra, geometria e cálculo.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Ciências"
+              class="card__image"
+            />
+            <h3 class="card__title">Ciências</h3>
+            <p class="card__description">
+              Explore as maravilhas da biologia, química e física.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="História"
+              class="card__image"
+            />
+            <h3 class="card__title">História</h3>
+            <p class="card__description">
+              Mergulhe no passado e aprenda sobre eventos históricos.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Literatura"
+              class="card__image"
+            />
+            <h3 class="card__title">Literatura</h3>
+            <p class="card__description">
+              Analise obras literárias clássicas e modernas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cursos de Música -->
+      <div class="section__header">
+        <h2 class="section__title">Cursos de Música</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/x4jybq1wIcY9JVSL6ioNuyDEEMq2yHzY5nS9gsN6qyb8or8E.jpg"
+              alt="Guitarra"
+              class="card__image"
+            />
+            <h3 class="card__title">Guitarra</h3>
+            <p class="card__description">
+              Domine a arte de tocar guitarra, desde o básico até técnicas
+              avançadas.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/nfLLmz1WQBQLNi95uE0iaGDibkjfmDQOZT31eOqC2cFmHdlnA.jpg"
+              alt="Piano"
+              class="card__image"
+            />
+            <h3 class="card__title">Piano</h3>
+            <p class="card__description">
+              Aprenda a tocar piano com aulas para todos os níveis de
+              habilidade.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/xlEJ8ILKYir3Mh4pmeHWvFzeEsTQ6Y1CAXMPPB9QPewdHdlnA.jpg"
+              alt="Violino"
+              class="card__image"
+            />
+            <h3 class="card__title">Violino</h3>
+            <p class="card__description">
+              Descubra as técnicas e habilidades necessárias para tocar violino.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/D2QEpCncaOrtBdpu9ODep5GGdGA5woCINfvxe5fozUejeor8E.jpg"
+              alt="Canto"
+              class="card__image"
+            />
+            <h3 class="card__title">Canto</h3>
+            <p class="card__description">
+              Melhore suas habilidades vocais com aulas de canto profissionais.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filmes, Séries e Desenhos -->
+      <div class="section__header">
+        <h2 class="section__title">Filmes, Séries e Desenhos</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/2OfcfAf2dgTHRoi93nek2B0Se4nQVQeNOQJgvyeqn6PyCrW5JA.jpg"
+              alt="Filme"
+              class="card__image"
+            />
+            <h3 class="card__title">Filme</h3>
+            <p class="card__description">Desfrute de filmes inspiradores.</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/hcepm2GoZmXeQUb4dfNAU96NNAVsLjGNM0RSRdGVWZAmAeKPB.jpg"
+              alt="Série"
+              class="card__image"
+            />
+            <h3 class="card__title">Série</h3>
+            <p class="card__description">Assista a séries emocionantes.</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/11B36SS2ik57JlL3cG2ENr0ZOHKMc2UI5Yz1Z3W2hGI5vr8E.jpg"
+              alt="Desenho"
+              class="card__image"
+            />
+            <h3 class="card__title">Desenho</h3>
+            <p class="card__description">
+              Animações que trazem histórias bíblicas à vida.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pregações e Palestras -->
+      <div class="section__header">
+        <h2 class="section__title">Pregações e Palestras</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Pregação"
+              class="card__image"
+            />
+            <h3 class="card__title">Pregação</h3>
+            <p class="card__description">
+              Mensagens inspiradoras sobre fé e esperança.
+            </p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Palestra"
+              class="card__image"
+            />
+            <h3 class="card__title">Palestra</h3>
+            <p class="card__description">
+              Palestras motivacionais sobre desenvolvimento pessoal.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <p>© 2025 Projeto Maranata</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.getElementById("menuToggle");
+        const navbar = document.getElementById("navbar");
+
+        menuToggle.addEventListener("click", function () {
+          navbar.classList.toggle("navbar--active");
+        });
+
+        const sectionHeaders = document.querySelectorAll(".section__header");
+        sectionHeaders.forEach((header) => {
+          header.addEventListener("click", function () {
+            this.classList.toggle("section__header--active");
+          });
+        });
+
+        const profileButton = document.getElementById("profile-button");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        const draggableItems = document.querySelectorAll(".draggable");
+        const searchInput = document.getElementById("search-input");
+        const searchResults = document.getElementById("search-results");
+        const allItems = document.querySelectorAll(".card");
+        const allSections = document.querySelectorAll(".section");
+
+        if (profileButton && dropdownMenu) {
+          profileButton.addEventListener("click", function () {
+            dropdownMenu.classList.toggle("dropdown__menu--hidden");
+          });
+
+          document.addEventListener("click", function (event) {
+            if (
+              !profileButton.contains(event.target) &&
+              !dropdownMenu.contains(event.target)
+            ) {
+              dropdownMenu.classList.add("dropdown__menu--hidden");
+            }
+          });
+        }
+
+        draggableItems.forEach((item) => {
+          item.addEventListener("dragstart", function (e) {
+            e.dataTransfer.setData("text/plain", e.target.id);
+          });
+        });
+
+        const dropZone = document.getElementById("drop-zone");
+        if (dropZone) {
+          dropZone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+          });
+
+          dropZone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData("text");
+            const draggableElement = document.getElementById(id);
+            e.target.appendChild(draggableElement);
+          });
+        }
+
+        searchInput.addEventListener("input", function () {
+          const query = searchInput.value.trim().toLowerCase();
+          searchResults.innerHTML = "";
+
+          if (query === "") {
+            allSections.forEach((section) =>
+              section.classList.remove("hidden")
+            );
+            return;
+          }
+
+          allSections.forEach((section) => section.classList.add("hidden"));
+
+          let foundItems = false;
+
+          allItems.forEach((item) => {
+            const title = item
+              .querySelector(".card__title")
+              .textContent.toLowerCase();
+            const description = item
+              .querySelector(".card__description")
+              .textContent.toLowerCase();
+
+            if (title.includes(query) || description.includes(query)) {
+              const clone = item.cloneNode(true);
+              searchResults.appendChild(clone);
+              foundItems = true;
+            }
+          });
+
+          if (!foundItems) {
+            searchResults.innerHTML =
+              '<p style="color: #9ca3af;">Nenhum resultado encontrado.</p>';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

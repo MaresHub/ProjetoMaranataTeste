@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bíblia</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      html {
+        font-size: 62.5%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #111827;
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        font-size: 1.6rem;
+        line-height: 1.5;
+      }
+
+      .header {
+        background-color: #1f2937;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
+      }
+
+      .header__logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .header__toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        position: absolute;
+        right: 5rem;
+        z-index: 60;
+      }
+
+      .header__toggle-line {
+        height: 0.3rem;
+        width: 2.5rem;
+        background-color: white;
+        margin: 0.4rem 0;
+        transition: 0.4s;
+      }
+
+      .navbar {
+        background-color: #1f2937;
+        padding: 1rem;
+        margin-top: 4rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar__link {
+        color: white;
+        text-decoration: none;
+        margin: 0 1rem;
+        transition: color 0.3s;
+      }
+
+      .navbar__link:hover {
+        color: #9ca3af;
+      }
+
+      .main {
+        padding: 2rem;
+        margin-top: 8rem;
+        flex: 1;
+        padding-bottom: 4rem;
+      }
+
+      .section {
+        margin-bottom: 1rem;
+      }
+
+      .section__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        padding: 1rem;
+        background-color: #1f2937;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .section__title {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .section__icon {
+        transition: transform 0.3s;
+      }
+
+      .section__header--active .section__icon {
+        transform: rotate(180deg);
+      }
+
+      .section__content {
+        display: none;
+        padding: 0.5rem;
+      }
+
+      .section__header--active + .section__content {
+        display: block;
+      }
+
+      .search {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: #1f2937;
+        color: white;
+        border: none;
+        font-size: 1.6rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      }
+
+      .card {
+        background-color: #1f2937;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        transition: transform 0.3s;
+      }
+
+      .card:hover {
+        transform: scale(1.05);
+      }
+
+      .card__image {
+        width: 100%;
+        height: 20rem;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .card__title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .card__description {
+        color: #9ca3af;
+      }
+
+      .footer {
+        background-color: #1f2937;
+        padding: 1rem;
+        text-align: center;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+        margin-top: auto;
+      }
+
+      /* Menu dropdown */
+      .dropdown {
+        position: relative;
+      }
+
+      .dropdown__menu {
+        position: absolute;
+        right: 1rem;
+        margin-top: 0.5rem;
+        width: 12rem;
+        background-color: #1f2937;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
+        display: none;
+        z-index: 60;
+      }
+
+      .dropdown__menu--hidden {
+        display: none;
+      }
+
+      .dropdown__zone {
+        padding: 1rem;
+      }
+
+      .draggable {
+        background-color: #374151;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.5rem;
+        cursor: move;
+      }
+
+      @media (max-width: 1200px) {
+        html {
+          font-size: 58%;
+        }
+
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+        }
+
+        .card__image {
+          height: 18rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 1.5rem;
+        }
+
+        .header__toggle {
+          display: flex;
+        }
+
+        .navbar {
+          position: fixed;
+          top: 6rem;
+          left: 0;
+          width: 100%;
+          display: none;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 1rem;
+          z-index: 40;
+        }
+
+        .navbar--active {
+          display: flex;
+        }
+
+        .navbar__link {
+          margin: 0.5rem 0;
+          padding: 0.5rem 1rem;
+          width: 100%;
+        }
+
+        .main {
+          margin-top: 6rem;
+          padding: 1rem;
+          padding-bottom: 4rem;
+        }
+
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        }
+
+        .card__image {
+          height: 15rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        html {
+          font-size: 55%;
+        }
+
+        .header {
+          padding: 1.2rem;
+        }
+
+        .header__toggle {
+          right: 1.5rem;
+        }
+
+        .section__header {
+          padding: 0.8rem;
+        }
+
+        .card {
+          padding: 0.8rem;
+        }
+      }
+
+      @media (max-width: 400px) {
+        html {
+          font-size: 50%;
+        }
+
+        .header {
+          padding: 1rem;
+        }
+
+        .navbar {
+          top: 5rem;
+        }
+
+        .main {
+          margin-top: 5rem;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__logo">Bíblia</div>
+      <div class="header__toggle" id="menuToggle">
+        <span class="header__toggle-line"></span>
+        <span class="header__toggle-line"></span>
+        <span class="header__toggle-line"></span>
+      </div>
+    </header>
+    <nav class="navbar" id="navbar">
+      <a href="../Home/Home.html" class="navbar__link">Home</a>
+      <a href="../Home/igrejas.html" class="navbar__link">Igrejas</a>
+      <a href="../Home/arrecadacao.html" class="navbar__link">Arrecadação</a>
+      <a href="../Home/Educa.html" class="navbar__link">EducaFlix</a>
+      <a href="../Home/palavra.html" class="navbar__link">Palavra</a>
+      <a href="../Home/Bíblia.html" class="navbar__link">Bíblia</a>
+    </nav>
+    <main class="main">
+      <section class="section">
+        <h2 class="section__title">Procurar</h2>
+        <input
+          type="text"
+          id="search-input"
+          class="search"
+          placeholder="Procure por um livro..."
+        />
+        <div class="grid" id="search-results"></div>
+      </section>
+
+      <!-- Pentateuco -->
+      <div class="section__header">
+        <h2 class="section__title">Pentateuco</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Gênesis"
+              class="card__image"
+            />
+            <h3 class="card__title">Gênesis</h3>
+            <p class="card__description">Ler Gênesis</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Êxodo"
+              class="card__image"
+            />
+            <h3 class="card__title">Êxodo</h3>
+            <p class="card__description">Ler Êxodo</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="Levítico"
+              class="card__image"
+            />
+            <h3 class="card__title">Levítico</h3>
+            <p class="card__description">Ler Levítico</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Números"
+              class="card__image"
+            />
+            <h3 class="card__title">Números</h3>
+            <p class="card__description">Ler Números</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Deuteronômio"
+              class="card__image"
+            />
+            <h3 class="card__title">Deuteronômio</h3>
+            <p class="card__description">Ler Deuteronômio</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Históricos -->
+      <div class="section__header">
+        <h2 class="section__title">Históricos</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/x4jybq1wIcY9JVSL6ioNuyDEEMq2yHzY5nS9gsN6qyb8or8E.jpg"
+              alt="Josué"
+              class="card__image"
+            />
+            <h3 class="card__title">Josué</h3>
+            <p class="card__description">Ler Josué</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/nfLLmz1WQBQLNi95uE0iaGDibkjfmDQOZT31eOqC2cFmHdlnA.jpg"
+              alt="Juízes"
+              class="card__image"
+            />
+            <h3 class="card__title">Juízes</h3>
+            <p class="card__description">Ler Juízes</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/xlEJ8ILKYir3Mh4pmeHWvFzeEsTQ6Y1CAXMPPB9QPewdHdlnA.jpg"
+              alt="Rute"
+              class="card__image"
+            />
+            <h3 class="card__title">Rute</h3>
+            <p class="card__description">Ler Rute</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/D2QEpCncaOrtBdpu9ODep5GGdGA5woCINfvxe5fozUejeor8E.jpg"
+              alt="1 Samuel"
+              class="card__image"
+            />
+            <h3 class="card__title">1 Samuel</h3>
+            <p class="card__description">Ler 1 Samuel</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/x4jybq1wIcY9JVSL6ioNuyDEEMq2yHzY5nS9gsN6qyb8or8E.jpg"
+              alt="2 Samuel"
+              class="card__image"
+            />
+            <h3 class="card__title">2 Samuel</h3>
+            <p class="card__description">Ler 2 Samuel</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/nfLLmz1WQBQLNi95uE0iaGDibkjfmDQOZT31eOqC2cFmHdlnA.jpg"
+              alt="1 Reis"
+              class="card__image"
+            />
+            <h3 class="card__title">1 Reis</h3>
+            <p class="card__description">Ler 1 Reis</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/xlEJ8ILKYir3Mh4pmeHWvFzeEsTQ6Y1CAXMPPB9QPewdHdlnA.jpg"
+              alt="2 Reis"
+              class="card__image"
+            />
+            <h3 class="card__title">2 Reis</h3>
+            <p class="card__description">Ler 2 Reis</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/D2QEpCncaOrtBdpu9ODep5GGdGA5woCINfvxe5fozUejeor8E.jpg"
+              alt="1 Crônicas"
+              class="card__image"
+            />
+            <h3 class="card__title">1 Crônicas</h3>
+            <p class="card__description">Ler 1 Crônicas</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/x4jybq1wIcY9JVSL6ioNuyDEEMq2yHzY5nS9gsN6qyb8or8E.jpg"
+              alt="2 Crônicas"
+              class="card__image"
+            />
+            <h3 class="card__title">2 Crônicas</h3>
+            <p class="card__description">Ler 2 Crônicas</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/nfLLmz1WQBQLNi95uE0iaGDibkjfmDQOZT31eOqC2cFmHdlnA.jpg"
+              alt="Esdras"
+              class="card__image"
+            />
+            <h3 class="card__title">Esdras</h3>
+            <p class="card__description">Ler Esdras</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/xlEJ8ILKYir3Mh4pmeHWvFzeEsTQ6Y1CAXMPPB9QPewdHdlnA.jpg"
+              alt="Neemias"
+              class="card__image"
+            />
+            <h3 class="card__title">Neemias</h3>
+            <p class="card__description">Ler Neemias</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/D2QEpCncaOrtBdpu9ODep5GGdGA5woCINfvxe5fozUejeor8E.jpg"
+              alt="Ester"
+              class="card__image"
+            />
+            <h3 class="card__title">Ester</h3>
+            <p class="card__description">Ler Ester</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Poéticos -->
+      <div class="section__header">
+        <h2 class="section__title">Poéticos</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/2OfcfAf2dgTHRoi93nek2B0Se4nQVQeNOQJgvyeqn6PyCrW5JA.jpg"
+              alt="Jó"
+              class="card__image"
+            />
+            <h3 class="card__title">Jó</h3>
+            <p class="card__description">Ler Jó</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/hcepm2GoZmXeQUb4dfNAU96NNAVsLjGNM0RSRdGVWZAmAeKPB.jpg"
+              alt="Salmos"
+              class="card__image"
+            />
+            <h3 class="card__title">Salmos</h3>
+            <p class="card__description">Ler Salmos</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/11B36SS2ik57JlL3cG2ENr0ZOHKMc2UI5Yz1Z3W2hGI5vr8E.jpg"
+              alt="Provérbios"
+              class="card__image"
+            />
+            <h3 class="card__title">Provérbios</h3>
+            <p class="card__description">Ler Provérbios</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/11B36SS2ik57JlL3cG2ENr0ZOHKMc2UI5Yz1Z3W2hGI5vr8E.jpg"
+              alt="Eclesiastes"
+              class="card__image"
+            />
+            <h3 class="card__title">Eclesiastes</h3>
+            <p class="card__description">Ler Eclesiastes</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/11B36SS2ik57JlL3cG2ENr0ZOHKMc2UI5Yz1Z3W2hGI5vr8E.jpg"
+              alt="Cantares"
+              class="card__image"
+            />
+            <h3 class="card__title">Cantares</h3>
+            <p class="card__description">Ler Cantares</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proféticos Maiores -->
+      <div class="section__header">
+        <h2 class="section__title">Proféticos Maiores</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Isaías"
+              class="card__image"
+            />
+            <h3 class="card__title">Isaías</h3>
+            <p class="card__description">Ler Isaías</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Jeremias"
+              class="card__image"
+            />
+            <h3 class="card__title">Jeremias</h3>
+            <p class="card__description">Ler Jeremias</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Lamentações"
+              class="card__image"
+            />
+            <h3 class="card__title">Lamentações</h3>
+            <p class="card__description">Ler Lamentações</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Ezequiel"
+              class="card__image"
+            />
+            <h3 class="card__title">Ezequiel</h3>
+            <p class="card__description">Ler Ezequiel</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Daniel"
+              class="card__image"
+            />
+            <h3 class="card__title">Daniel</h3>
+            <p class="card__description">Ler Daniel</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proféticos Menores -->
+      <div class="section__header">
+        <h2 class="section__title">Proféticos Menores</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Oséias"
+              class="card__image"
+            />
+            <h3 class="card__title">Oséias</h3>
+            <p class="card__description">Ler Oseias</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Joel"
+              class="card__image"
+            />
+            <h3 class="card__title">Joel</h3>
+            <p class="card__description">Ler Joel</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Amós"
+              class="card__image"
+            />
+            <h3 class="card__title">Amós</h3>
+            <p class="card__description">Ler Amós</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Jonas"
+              class="card__image"
+            />
+            <h3 class="card__title">Jonas</h3>
+            <p class="card__description">Ler Jones</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Obadias"
+              class="card__image"
+            />
+            <h3 class="card__title">Obadias</h3>
+            <p class="card__description">Ler Obadias</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Miquéias"
+              class="card__image"
+            />
+            <h3 class="card__title">Miquéias</h3>
+            <p class="card__description">Ler Miqueias</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Naum"
+              class="card__image"
+            />
+            <h3 class="card__title">Naum</h3>
+            <p class="card__description">Ler Naum</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Habacuque"
+              class="card__image"
+            />
+            <h3 class="card__title">Habacuque</h3>
+            <p class="card__description">Ler Habacuque</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Sofonias"
+              class="card__image"
+            />
+            <h3 class="card__title">Sofonias</h3>
+            <p class="card__description">Ler Sofonias</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Ageu"
+              class="card__image"
+            />
+            <h3 class="card__title">Ageu</h3>
+            <p class="card__description">Ler Ageu</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kb5mlh7vr4oUJheEN0oTsx0FtUR3VReRvjhjczrNcQGyouyTA.jpg"
+              alt="Zacarias"
+              class="card__image"
+            />
+            <h3 class="card__title">Zacarias</h3>
+            <p class="card__description">Ler Zacarias</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/0OMBIdIejPS6TyOM7cKr4x495euYLbvuG6BYKmnNt9WxouyTA.jpg"
+              alt="Malaquias"
+              class="card__image"
+            />
+            <h3 class="card__title">Malaquias</h3>
+            <p class="card__description">Ler Malaquias</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evangelho -->
+      <div class="section__header">
+        <h2 class="section__title">Evangelho</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Mateus"
+              class="card__image"
+            />
+            <h3 class="card__title">Mateus</h3>
+            <p class="card__description">Ler Evangelho de Mateus</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Marcos"
+              class="card__image"
+            />
+            <h3 class="card__title">Marcos</h3>
+            <p class="card__description">Ler Evangelho de Marcos</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="Lucas"
+              class="card__image"
+            />
+            <h3 class="card__title">Lucas</h3>
+            <p class="card__description">Ler Evangelho de Lucas</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="João"
+              class="card__image"
+            />
+            <h3 class="card__title">João</h3>
+            <p class="card__description">Ler Evangelho de Lucas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Epístolas Paulinas -->
+      <div class="section__header">
+        <h2 class="section__title">Epístolas Paulinas</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Romanos"
+              class="card__image"
+            />
+            <h3 class="card__title">Romanos</h3>
+            <p class="card__description">Ler Romanos</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="1 Coríntios"
+              class="card__image"
+            />
+            <h3 class="card__title">1 Coríntios</h3>
+            <p class="card__description">Ler 1 Coríntios</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="2 Coríntios"
+              class="card__image"
+            />
+            <h3 class="card__title">2 Coríntios</h3>
+            <p class="card__description">Ler 2 Coríntios</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Gálatas"
+              class="card__image"
+            />
+            <h3 class="card__title">Gálatas</h3>
+            <p class="card__description">Ler Gálatas</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Efésios"
+              class="card__image"
+            />
+            <h3 class="card__title">Efésios</h3>
+            <p class="card__description">Ler Efésios</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Filipenses"
+              class="card__image"
+            />
+            <h3 class="card__title">Filipenses</h3>
+            <p class="card__description">Ler Filipenses</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Colossenses"
+              class="card__image"
+            />
+            <h3 class="card__title">Colossenses</h3>
+            <p class="card__description">Ler Colossenses</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="1 Tessalonicenses"
+              class="card__image"
+            />
+            <h3 class="card__title">1 Tessalonicenses</h3>
+            <p class="card__description">Ler 1 Tessalonicenses</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="2 Tessalonicenses"
+              class="card__image"
+            />
+            <h3 class="card__title">2 Tessalonicenses</h3>
+            <p class="card__description">Ler 2 Tessalonicenses</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="1 Timóteo"
+              class="card__image"
+            />
+            <h3 class="card__title">1 Timóteo</h3>
+            <p class="card__description">Ler 1 Timóteo</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="2 Timóteo"
+              class="card__image"
+            />
+            <h3 class="card__title">2 Timóteo</h3>
+            <p class="card__description">Ler 2 Timóteo</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="Tito"
+              class="card__image"
+            />
+            <h3 class="card__title">Tito</h3>
+            <p class="card__description">Ler Tito</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Filemom"
+              class="card__image"
+            />
+            <h3 class="card__title">Filemom</h3>
+            <p class="card__description">Ler Filemom</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Epístolas Gerais -->
+      <div class="section__header">
+        <h2 class="section__title">Epístolas Gerais</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Hebreus"
+              class="card__image"
+            />
+            <h3 class="card__title">Hebreus</h3>
+            <p class="card__description">Ler Hebreus</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="Tiago"
+              class="card__image"
+            />
+            <h3 class="card__title">Tiago</h3>
+            <p class="card__description">Ler Tiago</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="1 Pedro"
+              class="card__image"
+            />
+            <h3 class="card__title">1 Pedro</h3>
+            <p class="card__description">Ler 1 Pedro</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="2 Pedro"
+              class="card__image"
+            />
+            <h3 class="card__title">2 Pedro</h3>
+            <p class="card__description">Ler 2 Pedro</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="1 João"
+              class="card__image"
+            />
+            <h3 class="card__title">1 João</h3>
+            <p class="card__description">Ler 1 João</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/kCNf2K9eoiqbVkQNRIpIYKDkGohEeWazJUKiWD1nwvKXHdlnA.jpg"
+              alt="2 João"
+              class="card__image"
+            />
+            <h3 class="card__title">2 João</h3>
+            <p class="card__description">Ler 2 João</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/JImkoadkeSwAOyCnFZTBjXq0BfmRcw2RoVR8gs7XGYhyjuyTA.jpg"
+              alt="3 João"
+              class="card__image"
+            />
+            <h3 class="card__title">3 João</h3>
+            <p class="card__description">Ler 1 João</p>
+          </div>
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/IepORDe3TWrh40IsGj64ePBFIkKmlQFIsb8RFXnEX27uHdlnA.jpg"
+              alt="Judas"
+              class="card__image"
+            />
+            <h3 class="card__title">Judas</h3>
+            <p class="card__description">Ler Judas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profético -->
+      <div class="section__header">
+        <h2 class="section__title">Profético</h2>
+        <i class="fas fa-chevron-down section__icon"></i>
+      </div>
+      <div class="section__content">
+        <div class="grid">
+          <div class="card">
+            <img
+              src="https://storage.googleapis.com/a1aa/image/WurJhipNhQLmE1wHYvKyPDrefZ4Pe5Z0FNzkkHTrVYjhHdlnA.jpg"
+              alt="Apocalipse"
+              class="card__image"
+            />
+            <h3 class="card__title">Apocalipse</h3>
+            <p class="card__description">Ler Apocalipse</p>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <p>© 2025 Projeto Maranata</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.getElementById("menuToggle");
+        const navbar = document.getElementById("navbar");
+
+        menuToggle.addEventListener("click", function () {
+          navbar.classList.toggle("navbar--active");
+        });
+
+        const sectionHeaders = document.querySelectorAll(".section__header");
+        sectionHeaders.forEach((header) => {
+          header.addEventListener("click", function () {
+            this.classList.toggle("section__header--active");
+          });
+        });
+
+        const profileButton = document.getElementById("profile-button");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+        const draggableItems = document.querySelectorAll(".draggable");
+        const searchInput = document.getElementById("search-input");
+        const searchResults = document.getElementById("search-results");
+        const allItems = document.querySelectorAll(".card");
+        const allSections = document.querySelectorAll(".section");
+
+        if (profileButton && dropdownMenu) {
+          profileButton.addEventListener("click", function () {
+            dropdownMenu.classList.toggle("dropdown__menu--hidden");
+          });
+
+          document.addEventListener("click", function (event) {
+            if (
+              !profileButton.contains(event.target) &&
+              !dropdownMenu.contains(event.target)
+            ) {
+              dropdownMenu.classList.add("dropdown__menu--hidden");
+            }
+          });
+        }
+
+        draggableItems.forEach((item) => {
+          item.addEventListener("dragstart", function (e) {
+            e.dataTransfer.setData("text/plain", e.target.id);
+          });
+        });
+
+        const dropZone = document.getElementById("drop-zone");
+        if (dropZone) {
+          dropZone.addEventListener("dragover", function (e) {
+            e.preventDefault();
+          });
+
+          dropZone.addEventListener("drop", function (e) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData("text");
+            const draggableElement = document.getElementById(id);
+            e.target.appendChild(draggableElement);
+          });
+        }
+
+        searchInput.addEventListener("input", function () {
+          const query = searchInput.value.trim().toLowerCase();
+          searchResults.innerHTML = "";
+
+          if (query === "") {
+            allSections.forEach((section) =>
+              section.classList.remove("hidden")
+            );
+            return;
+          }
+
+          allSections.forEach((section) => section.classList.add("hidden"));
+
+          let foundItems = false;
+
+          allItems.forEach((item) => {
+            const title = item
+              .querySelector(".card__title")
+              .textContent.toLowerCase();
+            const description = item
+              .querySelector(".card__description")
+              .textContent.toLowerCase();
+
+            if (title.includes(query) || description.includes(query)) {
+              const clone = item.cloneNode(true);
+              searchResults.appendChild(clone);
+              foundItems = true;
+            }
+          });
+
+          if (!foundItems) {
+            searchResults.innerHTML =
+              '<p style="color: #9ca3af;">Nenhum resultado encontrado.</p>';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

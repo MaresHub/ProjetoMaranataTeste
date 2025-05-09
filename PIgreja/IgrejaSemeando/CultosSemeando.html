@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Igreja Semeando</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+
+      header {
+        background-color: #0033a0;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        position: relative;
+        z-index: 1000;
+      }
+
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+      }
+
+      .menu-toggle span {
+        height: 3px;
+        width: 25px;
+        background-color: white;
+        margin: 4px 0;
+        transition: 0.4s;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      .nav-links a,
+      .nav-link-voltar a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-links a:hover,
+      .nav-link-voltar a:hover {
+        background-color: #002080;
+      }
+
+      .banner img {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+      }
+
+      .cultos {
+        padding: 20px;
+      }
+
+      .cards {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .card {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 8px;
+        width: 250px;
+        text-align: center;
+      }
+
+      .card button {
+        background: #0033a0;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: flex;
+        }
+
+        .nav-links {
+          position: absolute;
+          top: 60px;
+          left: 0;
+          width: 100%;
+          background-color: #0033a0;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          padding: 20px 0;
+          display: none;
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        header {
+          flex-wrap: wrap;
+        }
+
+        /* Estilo para o botão Voltar no mobile */
+        .nav-link-voltar {
+          margin-left: auto;
+        }
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background-color: #0033a0;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 10px;
+        border: 2px solid white;
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="nav-links" id="navLinks">
+        <a href="../IgrejaSemeando/IgrejaSemeando.html">Semeando</a>
+        <a href="../IgrejaSemeando/SobreNósSemeando.html">Sobre Nós</a>
+        <a href="../IgrejaSemeando/CultosSemeando.html">Cultos</a>
+      </div>
+      <div class="nav-link-voltar">
+        <a href="../../Home/Home.html">Voltar</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="banner">
+        <img src="IgrejaSemeando.png" alt="Igreja Semeando" />
+      </section>
+
+      <section class="cultos">
+        <h2>Próximos Cultos</h2>
+        <div class="cards">
+          <div class="card" data-day="0" data-time="10:00">
+            <h3>Culto Encontro <br />Com Deus</h3>
+            <p>Domingo - 10h</p>
+            <button>Detalhes</button>
+          </div>
+          <div class="card" data-day="3" data-time="19:30">
+            <h3>Sala De <br />Oração</h3>
+            <p>Quarta - 19:30</p>
+            <button>Detalhes</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title"></h2>
+        <p id="modal-description"></p>
+        <p id="modal-countdown" style="font-weight: bold"></p>
+      </div>
+    </div>
+
+    <script>
+      function toggleMenu() {
+        const nav = document.getElementById("navLinks");
+        nav.classList.toggle("active");
+      }
+
+      let intervalId = null;
+
+      function openModal(title, description, card) {
+        document.getElementById("modal-title").innerText = title;
+        document.getElementById("modal-description").innerText = description;
+        document.getElementById("modal").style.display = "block";
+        updateCountdown(card);
+      }
+
+      function closeModal() {
+        document.getElementById("modal").style.display = "none";
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+
+      document.querySelectorAll(".card button").forEach((button) => {
+        button.addEventListener("click", function () {
+          const title = this.parentElement.querySelector("h3").innerText;
+          const description = this.parentElement.querySelector("p").innerText;
+          openModal(title, description, this.parentElement);
+        });
+      });
+
+      window.onclick = function (event) {
+        const modal = document.getElementById("modal");
+        if (event.target == modal) {
+          closeModal();
+        }
+      };
+
+      function updateCountdown(card) {
+        if (intervalId !== null) {
+          clearInterval(intervalId);
+        }
+
+        const now = new Date();
+        const dayOffset = parseInt(card.getAttribute("data-day"));
+        const time = card.getAttribute("data-time");
+        const [hours, minutes] = time.split(":").map(Number);
+        const nextService = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + ((dayOffset - now.getDay() + 7) % 7),
+          hours,
+          minutes
+        );
+
+        const countdownElement = document.getElementById("modal-countdown");
+
+        intervalId = setInterval(() => {
+          const now = new Date();
+          const diff = nextService - now;
+
+          if (diff <= 0) {
+            clearInterval(intervalId);
+            intervalId = null;
+            countdownElement.innerText = "O culto já começou!";
+            return;
+          }
+
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hoursLeft = Math.floor(
+            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+          const minutesLeft = Math.floor(
+            (diff % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+
+          countdownElement.innerText = `Faltam ${days} dias, ${hoursLeft} horas, ${minutesLeft} minutos e ${secondsLeft} segundos.`;
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>
